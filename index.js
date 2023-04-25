@@ -30,10 +30,16 @@ console.log('örnek görev:', ilkiniDon(['as','sa'],function(metin){return metin
   Aşağıdaki skor1 ve skor2 kodlarını inceleyiniz ve aşağıdaki soruları altına not alarak cevaplayın
   
   1. skor1 ve skor2 arasındaki fark nedir?
-  
+  skor1 bir closure kullanarak bir fonksiyonu döndürür ve bu fonksiyon sayesinde skor değerini arttırırken, 
+  skor2 bir global değişken kullanarak skor değerini arttırır.
   2. Hangisi bir closure kullanmaktadır? Nasıl tarif edebilirsin? (yarınki derste öğreneceksin :) )
-  
+  skor1 bir closure kullanmaktadır. İlk önce ana fonksiyon olan skorArtirici(), bir fonksiyonu döndürmektedir.
+  Bu dönen fonksiyon, ana fonksiyonda tanımlanan skor değişkenine erişebilir ve bu değişkeni güncelleyebilir.
+  Bu nedenle dönen fonksiyon, skorArtirici() fonksiyonunun bir closure olduğunu söyleyebiliriz
   3. Hangi durumda skor1 tercih edilebilir? Hangi durumda skor2 daha mantıklıdır?
+  Eğer skor değeri sadece skorArtirici() fonksiyonu içinde kullanılacaksa veya skor değerinin sadece bir yerde 
+  kullanımı varsa, skor1 daha tercih edilebilir. 
+  Fakat skor değeri birden fazla yerde kullanılacaksa, skor2 daha mantıklıdır.
 */
 
 // skor1 kodları
@@ -64,9 +70,9 @@ Aşağıdaki takimSkoru() fonksiyonununda aşağıdakileri yapınız:
 Not: Bu fonskiyon, aşağıdaki diğer görevler için de bir callback fonksiyonu olarak da kullanılacak
 */
 
-function takimSkoru(/*Kodunuzu buraya yazınız*/){
-    /*Kodunuzu buraya yazınız*/
-}
+function takimSkoru(){
+  return Math.floor(Math.random() * 16) + 10;
+  }
 
 
 
@@ -86,10 +92,21 @@ Aşağıdaki macSonucu() fonksiyonununda aşağıdakileri yapınız:
 }
 */ 
 
-function macSonucu(/*Kodunuzu buraya yazınız*/){
-  /*Kodunuzu buraya yazınız*/
-}
+function macSonucu(takimSkoru1,ceyrekSayisi){
+  let evSahibiSkor = 0;
+  let konukTakimSkor = 0;
 
+  for(let i = 1 ;i <= ceyrekSayisi ; i++){
+    let evSahibiSkorCeyrek = takimSkoru1();
+    let konukTakimSkorCeyrek = takimSkoru1();
+    evSahibiSkor += evSahibiSkorCeyrek;
+    konukTakimSkor += konukTakimSkorCeyrek;
+  }
+  return {
+    "EvSahibi":evSahibiSkor,
+    "KonukTakim":konukTakimSkor
+  };
+}
 
 
 
@@ -109,9 +126,14 @@ Aşağıdaki periyotSkoru() fonksiyonununda aşağıdakileri yapınız:
   */
 
 
-function periyotSkoru(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
+function periyotSkoru(takimSkoru1) {
+  let evSahibiSkor = takimSkoru1();
+let konukTakimSkor = takimSkoru1();
 
+return {
+"EvSahibi": evSahibiSkor,
+"KonukTakim": konukTakimSkor
+}
 }
 
 
@@ -146,9 +168,33 @@ MAÇ UZAR ise skorTabelasi(periyotSkoru,takimSkoru,4)
 ] */
 // NOTE: Bununla ilgili bir test yoktur. Eğer logladığınız sonuçlar yukarıdakine benziyor ise tmamlandı sayabilirsiniz.
 
-function skorTabelasi(/*Kodunuzu buraya yazınız*/) {
-  /*Kodunuzu buraya yazınız*/
-}
+function skorTabelasi(periyotSkoru, takimSkoru, ceyrekSayisi) {
+  let evSahibiSkor = 0;
+  let konukTakimSkor = 0;
+  let skorlar = [];
+  for(let i = 1; i <= ceyrekSayisi; i++) {
+  let periyot = periyotSkoru(takimSkoru);
+  evSahibiSkor += periyot.EvSahibi;
+  konukTakimSkor += periyot.KonukTakim;
+  let periyotSkoruSatır =  `${i}. Periyot: Ev Sahibi ${periyot.EvSahibi} - Konuk Takım ${periyot.KonukTakim}`;
+  skorlar.push(periyotSkoruSatır);
+  }
+  if (evSahibiSkor === konukTakimSkor) {
+    for (let i = 1; i <= 2; i++) {
+      let uzatmaSonucu = periyotSkoru(takimSkoru);
+      EvSahibiSkor += uzatmaSonucu.EvSahibi;
+      KonukTakimSkor += uzatmaSonucu.KonukTakim;
+    
+      let uzatmaSkoruSatır = `${i}. Uzatma: Ev Sahibi ${uzatmaSonucu.EvSahibi} - Konuk Takım ${uzatmaSonucu.KonukTakim}`;
+      skorTablosu.push(uzatmaSkoruSatır);
+    }
+  }
+  let macSonucuSatır = `Maç Sonucu: Ev Sahibi ${evSahibiSkor} - Konuk Takım ${konukTakimSkor}`;
+  skorlar.push(macSonucuSatır);
+  return skorlar;
+  }
+  console.log(skorTabelasi(periyotSkoru,takimSkoru,4));
+
 
 
 
